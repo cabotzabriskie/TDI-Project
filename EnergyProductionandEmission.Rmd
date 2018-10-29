@@ -1,0 +1,52 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+  html_notebook: default
+  pdf_document: default
+---
+
+```{r}
+library(jsonlite)
+library(ggplot2)
+
+data3<-read.csv("raw data/emission_annual.csv", stringsAsFactors = F)
+data2<-read.csv("raw data/annual_generation_state.csv", stringsAsFactors = F)
+
+data2<-data2[,1:5]
+data2$GENERATION..Megawatthours.<-as.numeric(gsub(",","", data2$GENERATION..Megawatthours.))
+data3$CO2..Metric.Tons.<-as.numeric(gsub(",","", data3$CO2..Metric.Tons.))
+
+
+data3.1<-subset(data3, Energy.Source != "All Sources")
+data3.1<-subset(data3.1, Producer.Type == "Total Electric Power Industry")
+
+data2.1<-subset(data2, ENERGY.SOURCE != "Total")
+```
+
+
+West Virginia's Power Infrastructure
+
+```{r}
+ggplot(subset(data2.1, STATE == "WV"), aes(x = YEAR, y = GENERATION..Megawatthours./100, fill = ENERGY.SOURCE))+
+  geom_bar(stat = "identity")+
+  ylab("Gigawatts")
+
+ggplot(subset(data3.1, State == "WV"), aes(x = Year, y = CO2..Metric.Tons., fill = Energy.Source))+
+         geom_bar(stat = "identity")+
+         ylab("Metric Tons of CO2")
+```
+
+California's Power Infrastructure
+
+```{r}
+ggplot(subset(data2.1, STATE == "CA"), aes(x = YEAR, y = GENERATION..Megawatthours./100, fill = ENERGY.SOURCE))+
+  geom_bar(stat = "identity")+
+  ylab("Gigawatts")
+
+ggplot(subset(data3.1, State == "CA"), aes(x = Year, y = CO2..Metric.Tons., fill = Energy.Source))+
+  geom_bar(stat = "identity")+
+  ylab("Metric Tons of CO2")
+```
+
